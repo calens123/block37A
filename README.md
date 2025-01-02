@@ -1,5 +1,9 @@
 # block37A
 
+COUPLE OF NOTES:
+1. Apologies for the issues with formatting in the API documentation at the bottom of this README, I've been trying to get it to show up perfectly but this is about as good as I can get it.
+2. I was able to get through everything and complete all my testing up to doing PUT and DELETE on reviews belonging to specific users. I changed my reviews.js and server.js files dozens of times trying to get the Postman tests to work, with no luck. So eager to hear about how I can update those. 
+
 **Project Plan: RESTful API with Many-to-Many Relationships**
 
 ### **Goal**
@@ -135,139 +139,214 @@ Build a RESTful API that allows users to create, read, update, and delete items,
 
 ---
 
-API Documentation
+# API Documentation
+
+## Authentication Endpoints
+
+### Register a User
+**POST** `/api/auth/register`
+
+**Request Body:**
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response:**
+- **201 Created:** Returns the created user (excluding password).
+- **400 Bad Request:** User already exists.
 
 ---
 
-Authentication
-POST /api/auth/register
+### Login a User
+**POST** `/api/auth/login`
 
-   Description: Registers a new user.
-   Request Body:
-
- {
-  "username": "exampleuser",
-  "email": "user@example.com",
-  "password": "securepassword"
- }
-
-Response:
-
-   {
-      "id": 1,
-      "username": "exampleuser",
-      "email": "user@example.com"
-    }
-
-POST /api/auth/login
-
-   Description: Logs in an existing user.
-   Request Body:
-
+**Request Body:**
+```json
 {
-  "email": "user@example.com",
-  "password": "securepassword"
+  "email": "string",
+  "password": "string"
 }
+```
 
-Response:
+**Response:**
+- **200 OK:** Returns a JWT token.
+- **401 Unauthorized:** Invalid email or password.
 
-   {
-      "token": "your_jwt_token"
-    }
+---
 
-GET /api/auth/me
+### Get Current User
+**GET** `/api/auth/me` (🔒 Requires Authorization)
 
-   Description: Fetches the authenticated user's details.
-   Headers:
-
+**Headers:**
+```
 Authorization: Bearer <token>
+```
 
-Response:
+**Response:**
+- **200 OK:** Returns the authenticated user's information.
+- **401 Unauthorized:** Missing or invalid token.
 
-   {
-      "id": 1,
-      "username": "exampleuser",
-      "email": "user@example.com"
-    }
+---
 
-Items
-GET /api/items
+## Item Endpoints
 
-   Description: Fetches all items.
-   Response:
+### Get All Items
+**GET** `/api/items`
 
-    [
-      {
-        "id": 1,
-        "name": "Item 1",
-        "description": "A sample item",
-        "averageScore": 4.5
-      }
-    ]
+**Response:**
+- **200 OK:** Returns an array of items.
 
-GET /api/items/:id
+---
 
-   Description: Fetches a specific item.
-   Response:
+### Get Specific Item
+**GET** `/api/items/:id`
 
-   {
-      "id": 1,
-      "name": "Item 1",
-      "description": "A sample item",
-      "averageScore": 4.5
-    }
+**Response:**
+- **200 OK:** Returns the requested item.
+- **404 Not Found:** Item not found.
 
-POST /api/items
+---
 
-   Description: Creates a new item.
-   Request Body:
+### Create an Item
+**POST** `/api/items`
 
+**Request Body:**
+```json
 {
-  "name": "New Item",
-  "description": "Description of the item"
+  "name": "string",
+  "description": "string"
 }
+```
 
-Response:
+**Response:**
+- **201 Created:** Returns the created item.
+- **400 Bad Request:** Missing required fields.
 
-    {
-      "id": 1,
-      "name": "New Item",
-      "description": "Description of the item",
-      "averageScore": 0
-    }
+---
 
-PUT /api/items/:id
+### Update an Item
+**PUT** `/api/items/:id`
 
-   Description: Updates an item.
-   Request Body:
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string"
+}
+```
 
-    {
-      "name": "Updated Item",
-      "description": "Updated description"
-    }
+**Response:**
+- **200 OK:** Returns the updated item.
+- **404 Not Found:** Item not found.
 
-DELETE /api/items/:id
+---
 
-    Description: Deletes an item.
+### Delete an Item
+**DELETE** `/api/items/:id`
 
-Reviews
-GET /api/items/:id/reviews
+**Response:**
+- **204 No Content:** Successfully deleted.
+- **404 Not Found:** Item not found.
 
-    Description: Fetches reviews for a specific item.
+---
 
-POST /api/items/:id/reviews
+## Review Endpoints
 
-    Description: Adds a review for an item.
+### Get All Reviews for an Item
+**GET** `/api/items/:itemId/reviews`
 
-GET /api/reviews/me
+**Response:**
+- **200 OK:** Returns all reviews for the specified item.
 
-    Description: Fetches reviews for the authenticated user.
+---
 
-Comments
-POST /api/items/:itemId/reviews/:reviewId/comments
+### Get User Reviews
+**GET** `/api/reviews/me` (🔒 Requires Authorization)
 
-    Description: Adds a comment to a review.
+**Headers:**
+```
+Authorization: Bearer <token>
+```
 
-GET /api/comments/me
+**Response:**
+- **200 OK:** Returns all reviews by the authenticated user.
 
-    Description: Fetches comments for the authenticated user.
+---
+
+### Add a Review
+**POST** `/api/items/:id/reviews` (🔒 Requires Authorization)
+
+**Request Body:**
+```json
+{
+  "text": "string",
+  "score": "integer",
+  "userId": "integer"
+}
+```
+
+**Response:**
+- **201 Created:** Returns the created review.
+- **400 Bad Request:** Missing required fields.
+
+---
+
+## Comment Endpoints
+
+### Add a Comment
+**POST** `/api/items/:itemId/reviews/:reviewId/comments` (🔒 Requires Authorization)
+
+**Request Body:**
+```json
+{
+  "text": "string",
+  "userId": "integer"
+}
+```
+
+**Response:**
+- **201 Created:** Returns the created comment.
+- **400 Bad Request:** Missing required fields.
+
+---
+
+### Get User Comments
+**GET** `/api/comments/me` (🔒 Requires Authorization)
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response:**
+- **200 OK:** Returns all comments by the authenticated user.
+
+---
+
+### Update a Comment
+**PUT** `/api/users/:userId/comments/:id` (🔒 Requires Authorization)
+
+**Request Body:**
+```json
+{
+  "text": "string"
+}
+```
+
+**Response:**
+- **200 OK:** Returns the updated comment.
+- **404 Not Found:** Comment not found.
+
+---
+
+### Delete a Comment
+**DELETE** `/api/users/:userId/comments/:id` (🔒 Requires Authorization)
+
+**Response:**
+- **204 No Content:** Successfully deleted.
+- **404 Not Found:** Comment not found.
+

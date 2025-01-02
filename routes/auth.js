@@ -1,10 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const prisma = require("../node_modules/@prisma/client").PrismaClient;
+const prisma = require("../prisma/prisma"); // Importing shared prisma instance
 const router = express.Router();
 
-const prismaClient = new prisma();
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 // Register a new user
@@ -12,7 +11,7 @@ router.post("/register", async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     // Check if user already exists
-    const existingUser = await prismaClient.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: { email },
     });
     if (existingUser) {
@@ -23,7 +22,7 @@ router.post("/register", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the user
-    const newUser = await prismaClient.user.create({
+    const newUser = await prisma.user.create({
       data: { username, email, passwordHash: hashedPassword },
     });
 
@@ -43,7 +42,7 @@ router.post("/login", async (req, res, next) => {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await prismaClient.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
@@ -77,7 +76,7 @@ router.get("/me", async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
 
     // Fetch the user
-    const user = await prismaClient.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
     });
 

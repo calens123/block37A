@@ -1,11 +1,9 @@
-const prisma = require("../node_modules/@prisma/client").PrismaClient;
+const prisma = require("./prisma");
 
 const seed = async () => {
-  const prismaClient = new prisma();
-
   try {
     // Seed Users
-    const users = await prismaClient.user.createMany({
+    const users = await prisma.user.createMany({
       data: [
         {
           username: "Alice",
@@ -28,7 +26,7 @@ const seed = async () => {
     console.log("Users seeded:", users.count);
 
     // Seed Items
-    const items = await prismaClient.item.createMany({
+    const items = await prisma.item.createMany({
       data: [
         {
           name: "Book A",
@@ -51,7 +49,7 @@ const seed = async () => {
     console.log("Items seeded:", items.count);
 
     // Seed Reviews
-    const reviews = await prismaClient.review.createMany({
+    const reviews = await prisma.review.createMany({
       data: [
         { text: "Loved this book!", score: 5, itemId: 1, userId: 1 },
         { text: "It was okay.", score: 3, itemId: 2, userId: 2 },
@@ -59,8 +57,10 @@ const seed = async () => {
       ],
     });
 
+    console.log("Reviews seeded:", reviews.count);
+
     // Seed Comments
-    const comments = await prismaClient.comment.createMany({
+    const comments = await prisma.comment.createMany({
       data: [
         { text: "I agree with this review!", reviewId: 1, userId: 2 },
         { text: "Disagree, thought it was better.", reviewId: 2, userId: 3 },
@@ -74,7 +74,7 @@ const seed = async () => {
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
-    await prismaClient.$disconnect();
+    await prisma.$disconnect();
   }
 };
 

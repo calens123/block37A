@@ -1,30 +1,73 @@
 const express = require("express");
 const router = express.Router();
-const prisma = require("../prisma/prisma").default;
+const prisma = require("../prisma/prisma");
+const jwt = require("jsonwebtoken"); // Ensure this import is added
 
 // Add a comment to a review
-router.post("/reviews/:id/comments", async (req, res, next) => {
+router.post("/:itemId/reviews/:reviewId/comments", async (req, res, next) => {
   try {
-    const reviewId = +req.params.id;
+    const { reviewId } = req.params;
     const { text, userId } = req.body;
-    const comment = await prismaClient.comment.create({
-      data: { text, reviewId, userId },
+
+    if (!text || !userId) {
+      return res.status(400).json({ message: "Text and userId are required." });
+    }
+
+    const comment = await prisma.comment.create({
+      data: {
+        text,
+        reviewId: parseInt(reviewId, 10),
+        userId: parseInt(userId, 10),
+      },
     });
+
     res.status(201).json(comment);
   } catch (error) {
     next(error);
   }
 });
 
-// Update a comment
-router.put("/comments/:id", async (req, res, next) => {
+// Get all comments by the logged-in user
+router.get("/me", async (req, res, next) => {
   try {
-    const id = +req.params.id;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Authorization token required." });
+    }
+
+    // Verify token and get user ID
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "supersecretkey"
+    );
+    const userId = decoded.userId;
+
+    // Fetch comments by the user
+    const comments = await prisma.comment.findMany({
+      where: { userId },
+    });
+
+    res.json(comments);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update a comment
+router.put("/:id", async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id, 10);
     const { text } = req.body;
-    const comment = await prismaClient.comment.update({
+
+    if (!text) {
+      return res.status(400).json({ message: "Text is required." });
+    }
+
+    const comment = await prisma.comment.update({
       where: { id },
       data: { text },
     });
+
     res.json(comment);
   } catch (error) {
     next(error);
@@ -32,10 +75,10 @@ router.put("/comments/:id", async (req, res, next) => {
 });
 
 // Delete a comment
-router.delete("/comments/:id", async (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
-    const id = +req.params.id;
-    await prismaClient.comment.delete({ where: { id } });
+    const id = parseInt(req.params.id, 10);
+    await prisma.comment.delete({ where: { id } });
     res.sendStatus(204);
   } catch (error) {
     next(error);

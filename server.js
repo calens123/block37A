@@ -15,8 +15,11 @@ app.use(morgan("dev"));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
-app.use("/api/items", reviewRoutes); // Adjusted to mount review routes under `/api/items`
+app.use("/api/items/:itemId/reviews", reviewRoutes);
+app.use("/api/items/:itemId/reviews/:reviewId/comments", commentRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/users", reviewRoutes); // Ensure it's placed here
 
 // Error handling middleware
 app.use((err, req, res, next) => {

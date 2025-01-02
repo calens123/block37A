@@ -139,22 +139,21 @@ API Documentation
 
 ---
 
-Authentication:
-
+Authentication
 POST /api/auth/register
 
-    Description: Registers a new user.
-    Request Body:
+   Description: Registers a new user.
+   Request Body:
 
-{
+ {
   "username": "exampleuser",
   "email": "user@example.com",
   "password": "securepassword"
-}
+ }
 
 Response:
 
-    {
+   {
       "id": 1,
       "username": "exampleuser",
       "email": "user@example.com"
@@ -162,8 +161,8 @@ Response:
 
 POST /api/auth/login
 
-    Description: Logs in an existing user.
-    Request Body:
+   Description: Logs in an existing user.
+   Request Body:
 
 {
   "email": "user@example.com",
@@ -172,33 +171,30 @@ POST /api/auth/login
 
 Response:
 
-    {
+   {
       "token": "your_jwt_token"
     }
 
 GET /api/auth/me
 
-    Description: Fetches the authenticated user's details.
-    Headers:
+   Description: Fetches the authenticated user's details.
+   Headers:
 
 Authorization: Bearer <token>
 
 Response:
 
-    {
+   {
       "id": 1,
       "username": "exampleuser",
       "email": "user@example.com"
     }
 
----
-
-Items:
-
+Items
 GET /api/items
 
-    Description: Fetches all items.
-    Response:
+   Description: Fetches all items.
+   Response:
 
     [
       {
@@ -211,10 +207,10 @@ GET /api/items
 
 GET /api/items/:id
 
-    Description: Fetches a specific item.
-    Response:
+   Description: Fetches a specific item.
+   Response:
 
-    {
+   {
       "id": 1,
       "name": "Item 1",
       "description": "A sample item",
@@ -223,8 +219,8 @@ GET /api/items/:id
 
 POST /api/items
 
-    Description: Creates a new item.
-    Request Body:
+   Description: Creates a new item.
+   Request Body:
 
 {
   "name": "New Item",
@@ -242,8 +238,8 @@ Response:
 
 PUT /api/items/:id
 
-    Description: Updates an item.
-    Request Body:
+   Description: Updates an item.
+   Request Body:
 
     {
       "name": "Updated Item",
@@ -254,10 +250,7 @@ DELETE /api/items/:id
 
     Description: Deletes an item.
 
----
-
-Reviews:
-
+Reviews
 GET /api/items/:id/reviews
 
     Description: Fetches reviews for a specific item.
@@ -270,10 +263,7 @@ GET /api/reviews/me
 
     Description: Fetches reviews for the authenticated user.
 
----
-
-Comments:
-
+Comments
 POST /api/items/:itemId/reviews/:reviewId/comments
 
     Description: Adds a comment to a review.

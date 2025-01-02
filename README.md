@@ -139,6 +139,24 @@ Build a RESTful API that allows users to create, read, update, and delete items,
 
 ---
 
+Entity-Relationship Diagram (Text Representation)
+
+    User
+        Attributes: id, username, email, passwordHash
+        Relationships:
+            Has Many Review
+            Has Many Comment
+
+    Item
+        Attributes: id, name, description, averageScore
+        Relationships:
+            Has Many Review
+
+    Review
+        Attributes: id, text, score, itemId, userId, createdAt
+
+---
+
 # API Documentation
 
 ## Authentication Endpoints

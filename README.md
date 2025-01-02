@@ -133,4 +133,151 @@ Build a RESTful API that allows users to create, read, update, and delete items,
    - [Express.js Docs](https://expressjs.com/)
    - [Jest Docs](https://jestjs.io/)
 
+---
 
+API Documentation
+
+---
+
+Authentication:
+
+POST /api/auth/register
+
+    Description: Registers a new user.
+    Request Body:
+
+{
+  "username": "exampleuser",
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+Response:
+
+    {
+      "id": 1,
+      "username": "exampleuser",
+      "email": "user@example.com"
+    }
+
+POST /api/auth/login
+
+    Description: Logs in an existing user.
+    Request Body:
+
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+Response:
+
+    {
+      "token": "your_jwt_token"
+    }
+
+GET /api/auth/me
+
+    Description: Fetches the authenticated user's details.
+    Headers:
+
+Authorization: Bearer <token>
+
+Response:
+
+    {
+      "id": 1,
+      "username": "exampleuser",
+      "email": "user@example.com"
+    }
+
+---
+
+Items:
+
+GET /api/items
+
+    Description: Fetches all items.
+    Response:
+
+    [
+      {
+        "id": 1,
+        "name": "Item 1",
+        "description": "A sample item",
+        "averageScore": 4.5
+      }
+    ]
+
+GET /api/items/:id
+
+    Description: Fetches a specific item.
+    Response:
+
+    {
+      "id": 1,
+      "name": "Item 1",
+      "description": "A sample item",
+      "averageScore": 4.5
+    }
+
+POST /api/items
+
+    Description: Creates a new item.
+    Request Body:
+
+{
+  "name": "New Item",
+  "description": "Description of the item"
+}
+
+Response:
+
+    {
+      "id": 1,
+      "name": "New Item",
+      "description": "Description of the item",
+      "averageScore": 0
+    }
+
+PUT /api/items/:id
+
+    Description: Updates an item.
+    Request Body:
+
+    {
+      "name": "Updated Item",
+      "description": "Updated description"
+    }
+
+DELETE /api/items/:id
+
+    Description: Deletes an item.
+
+---
+
+Reviews:
+
+GET /api/items/:id/reviews
+
+    Description: Fetches reviews for a specific item.
+
+POST /api/items/:id/reviews
+
+    Description: Adds a review for an item.
+
+GET /api/reviews/me
+
+    Description: Fetches reviews for the authenticated user.
+
+---
+
+Comments:
+
+POST /api/items/:itemId/reviews/:reviewId/comments
+
+    Description: Adds a comment to a review.
+
+GET /api/comments/me
+
+    Description: Fetches comments for the authenticated user.
